@@ -88,7 +88,7 @@ function! s:prototype.handle_window()
 
   let do_delete = !self.is_buffer_shown_in_another_window(self.target_buffer)
 
-  if self.do_preserve
+  if !self.dont_preserve
     let scratch_buffer = self.preserve_window()
     if do_delete
       " After preserve_window(), the target buffer might not exist
@@ -168,12 +168,12 @@ function! s:prototype.is_buffer_shown_in_another_window(target_buffer)
 endfunction
 
 " s:sayonara() {{{1
-function! s:sayonara(do_preserve)
+function! s:sayonara(dont_preserve)
   let hidden = &hidden
   set hidden
   try
     let instance = extend(s:prototype, {
-          \ 'do_preserve': a:do_preserve,
+          \ 'dont_preserve': a:dont_preserve,
           \ 'target_buffer': bufnr('%'),
           \ })
     execute instance.handle_modified_buffer()
@@ -184,4 +184,4 @@ function! s:sayonara(do_preserve)
 endfunction
 " }}}
 
-command! -nargs=0 -complete=buffer -bang -bar Sayonara call s:sayonara(<bang>0)
+command! -nargs=0 -complete=buffer -bang -bar BW call s:sayonara(<bang>0)
